@@ -1,0 +1,6 @@
+#googl drive api
+google:
+  service_account_email : itnews@itnews-367605.iam.gserviceaccount.com
+  application_name : ITNews
+  folder_id : 1A6mbCvCwW7-DQipeBowNuVc239ARIh_D
+  service_account_key : itnews-367605-7a5ccc21c9aa.p12
