@@ -1,14 +1,9 @@
 package com.example.itnews.service.impl;
 
 import com.example.itnews.dto.sqlmapping.IVoteDTO;
-import com.example.itnews.entity.Category;
-import com.example.itnews.entity.Post;
 import com.example.itnews.entity.Vote;
 import com.example.itnews.entity.VoteId;
-import com.example.itnews.repository.CategoryRepository;
 import com.example.itnews.repository.VoteRepository;
-import com.example.itnews.security.exceptions.MRuntimeException;
-import com.example.itnews.service.CategoryService;
 import com.example.itnews.service.VoteService;
 import org.springframework.stereotype.Service;
 

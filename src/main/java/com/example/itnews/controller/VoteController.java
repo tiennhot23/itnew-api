@@ -95,7 +95,7 @@ public class VoteController {
 
     @GetMapping("/{id_post}")
     @PreAuthorize("permitAll()")
-    public MResponse<?> votePost(@PathVariable("id_post") Integer idPost,
+    public MResponse<?> getPost(@PathVariable("id_post") Integer idPost,
                                  @RequestHeader(name = "Authorization", required = true) String header) throws MException {
         try {
             Post post = postService.getPostById(idPost);

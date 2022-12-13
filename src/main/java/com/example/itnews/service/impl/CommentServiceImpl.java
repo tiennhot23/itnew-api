@@ -9,6 +9,7 @@ import com.example.itnews.repository.TagRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.CommentService;
 import com.example.itnews.service.TagService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment get(Integer idCmt) {
         return commentRepository.findById(idCmt)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Comment not found"));
+                .orElseThrow(() -> new MRuntimeException("Comment  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -72,6 +73,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ICommentDTO selectId(Integer idCmt) {
         return commentRepository.selectId(idCmt)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Comment not found"));
+                .orElseThrow(() -> new MRuntimeException("Comment  not found", HttpStatus.NOT_FOUND));
     }
 }

@@ -10,7 +10,7 @@ import com.example.itnews.dto.sqlmapping.IPostDTO;
 import com.example.itnews.dto.sqlmapping.ITagDTO;
 import com.example.itnews.entity.*;
 import com.example.itnews.dto.AccountDTO;
-import com.example.itnews.entity.CreateAccountDTO;
+import com.example.itnews.dto.CreateAccountDTO;
 import com.example.itnews.payloads.request.LoginRequest;
 import com.example.itnews.payloads.response.MException;
 import com.example.itnews.payloads.response.MResponse;
@@ -29,14 +29,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -147,7 +145,7 @@ public class AccountController {
                 throw new MException("Thời gian khóa chỉ được nhỏ hơn 576 giờ", HttpStatus.BAD_REQUEST);
             }
             if (accLock.getStatus() != 0) {
-                return new MResponse<>("Tài khoản này đã bị khóa");
+                throw new MException("Tài khoản này đã bị khóa", HttpStatus.FORBIDDEN);
             }
 
             LockAccount lockAccount = lockAccountService.lock(accLock.getIdAccount(), accBoss.getIdAccount(), lockAccountDTO);
@@ -179,11 +177,11 @@ public class AccountController {
     }
 
     @PostMapping("/forgot/password")
-    public MResponse<String> forgotPassword(@Valid @RequestBody Account account) throws MException {
+    public MResponse<?> forgotPassword(@Valid @RequestBody Account account) throws MException {
         try {
             String username = account.getAccountName();
             if (username.equals(""))
-                throw new MException("Thiếu dữ liệu gửi về", HttpStatus.BAD_REQUEST);
+                throw new MException("Thiếu dữ liệu", HttpStatus.BAD_REQUEST);
             account = accountService.getAccountByUsername(username);
             String code = createCode();
             String hashCode = passwordEncoder.encode(code);
@@ -193,7 +191,9 @@ public class AccountController {
             log.error("code: {}", code);
             log.error("hashCode: {}", hashCode);
             log.error("verification: {}", verification.toString());
-            return new MResponse<>("Đã gửi mã xác nhận");
+            Map<String, Integer> map = new HashMap<>();
+            map.put("id_account", account.getIdAccount());
+            return new MResponse<>("Đã gửi mã xác nhận", map);
         } catch (Exception e) {
             if (e instanceof MRuntimeException) {
                 throw new MException(((MRuntimeException) e).getMessage(), ((MRuntimeException) e).getHttpStatus());
@@ -281,7 +281,7 @@ public class AccountController {
             account.setRole(new Role(idRole, "User"));
             account.setAvatar(AppConstants.avatarDefault);
             account = accountService.saveAccount(account);
-            return new MResponse<Integer>("Tạo mới tài khoản thành công", account.getIdAccount());
+            return new MResponse<Integer>("Tạo mới tài khoản thành công");
         } catch (Exception e) {
             if (e instanceof MRuntimeException) {
                 throw new MException(((MRuntimeException) e).getMessage(), ((MRuntimeException) e).getHttpStatus());
@@ -354,10 +354,10 @@ public class AccountController {
     }
 
     @GetMapping("/all")
-    public MResponse<List<IAccountDTO>> getAllAccount(@RequestParam(required = false, value = "page") Integer page, @RequestHeader(name = "Authorization") String header) throws MException {
+    public MResponse<List<IAccountDTO>> getAllAccount(@RequestHeader(name = "Authorization") String header) throws MException {
         try {
             List<IAccountDTO> list = new ArrayList<>();
-            List<Integer> ids = accountService.getListIdAccount(page == null ? 1 : page);
+            List<Integer> ids = accountService.getListIdAccount();
             if (header != null && !header.equals("")) {
                 String username = jwtTokenProvider.getUsernameFromJWT(header.substring(7));
                 Account account = accountService.getAccountByUsername(username);
@@ -384,6 +384,7 @@ public class AccountController {
         }
     }
 
+    @Deprecated
     @GetMapping("/search")
     public MResponse<List<IAccountDTO>> searchAccount(@RequestParam(required = false, value = "k") String k,
                                                       @RequestParam(required = false, value = "page") Integer page,
@@ -436,6 +437,7 @@ public class AccountController {
             } else {
                 accountDTO = accountService.getAllInformation(id);
             }
+            if (accountDTO == null) throw new MException("Tài khoản không tồn tại", HttpStatus.NOT_FOUND);
             return new MResponse<>("Đã tìm thấy tài khoản", accountDTO);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -496,6 +498,7 @@ public class AccountController {
         }
     }
 
+    @Deprecated
     @GetMapping("/{id}/role")
     public MResponse<Role> getAccountRoleById(@PathVariable("id") Integer id,
                                               @RequestHeader(name = "Authorization", required = false) String header) throws MException {
@@ -694,6 +697,7 @@ public class AccountController {
         }
     }
 
+    @Deprecated
     @GetMapping("/{id}/view")
     public MResponse<?> getAccountViewById(@PathVariable("id") Integer id,
                                                @RequestHeader(name = "Authorization", required = false) String header) throws MException {
@@ -747,6 +751,7 @@ public class AccountController {
     }
 
 
+    @Deprecated
     @PutMapping("/change/information")
     @PreAuthorize("permitAll()")
     public MResponse<?> changeSelfInformation(@RequestBody AccountDTO accountDTO,
@@ -797,9 +802,6 @@ public class AccountController {
         try {
             String username = jwtTokenProvider.getUsernameFromJWT(header.substring(7));
             Account account = accountService.getAccountByUsername(username);
-            if (realName == null || realName.equals("")) {
-                throw new MException("real_name là bắt buộc", HttpStatus.BAD_REQUEST);
-            }
             if (birth != null && !birth.equals("")) {
                 String date = validDate(birth);
                 if (date.equals("")) {
@@ -820,7 +822,7 @@ public class AccountController {
                 File file = driveService.uploadFile(String.valueOf(account.getIdAccount()), fileTemp.getAbsolutePath(), image.getContentType());
                 account.setAvatar("https://drive.google.com/uc?id=" + file.getId());
             }
-            account.setRealName(realName);
+            account.setRealName(realName == null ? account.getRealName() : realName);
             account.setGender(gender == null ? account.getGender() : gender);
             account.setCompany(company == null ? account.getCompany() : company);
             account.setPhone(phone == null ? account.getPhone() : phone);
@@ -840,7 +842,7 @@ public class AccountController {
     }
 
     @PatchMapping("/{id}/unlock")
-    @PreAuthorize("hasAnyRole('Moder', 'Admin')")
+    @PreAuthorize("hasAnyRole('Admin')")
     public MResponse<?> unlockAccount(@PathVariable("id") Integer idAccountLock,
                                       @RequestHeader(name = "Authorization", required = true) String header) throws MException {
         try {
@@ -849,11 +851,13 @@ public class AccountController {
             Account accountLock = accountService.getAccountById(idAccountLock);
 
             if (accountBoss.getStatus() != 0 ||
-                    accountBoss.getRole().getIdRole() >= accountLock.getRole().getIdRole() ||
-                    accountLock.getStatus() == 2) {
+                    accountBoss.getRole().getIdRole() >= accountLock.getRole().getIdRole()) {
                 throw new MException("Tài khoản không có quyền thực hiện", HttpStatus.FORBIDDEN);
+            } else if (accountLock.getStatus() == 2) {
+                throw new MException("Tài khoản đã bị khoá vô thời hạn", HttpStatus.FORBIDDEN);
             } else {
                 accountLock.setStatus(0);
+                lockAccountService.unlock(idAccountLock);
                 accountService.updateAccount(accountLock);
                 notificationService.addNotification(idAccountLock, "Tài khoản của bạn đã được mở khóa", "/account/" + idAccountLock);
                 mailSenderService.sendSimpleMessage(accountLock.getEmail(), ISubject.UNLOCK_ACCOUNT,
@@ -874,7 +878,7 @@ public class AccountController {
 
     @PatchMapping("/{id}/die")
     @PreAuthorize("hasAnyRole('Admin')")
-    public MResponse<?> unlockAccount(@PathVariable("id") Integer idAccountLock,
+    public MResponse<?> lockAccount(@PathVariable("id") Integer idAccountLock,
                                       @RequestBody LockAccountDTO lockAccountDTO,
                                       @RequestHeader(name = "Authorization", required = true) String header) throws MException {
         try {
@@ -932,6 +936,7 @@ public class AccountController {
         }
     }
 
+    @Deprecated
     @PutMapping("/update/avatar")
     @PreAuthorize("permitAll()")
     public MResponse<?> updateAvatar(@RequestParam(value = "image", required = false) MultipartFile image,

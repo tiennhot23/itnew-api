@@ -8,6 +8,7 @@ import com.example.itnews.repository.LockAccountRepository;
 import com.example.itnews.repository.NotificationRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.NotificationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public Notification addNotification(Integer idAccount, String content, String link) {
         Account account = accountRepository.findById(idAccount)
-                .orElseThrow(() -> new RuntimeException(TAG + ": AccountNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Account  not found", HttpStatus.NOT_FOUND));
         return notificationRepository.save(
                 Notification.builder()
                         .account(account)
@@ -40,7 +41,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public Notification get(Integer idNotification) {
         return notificationRepository.findById(idNotification)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Notification not found"));
+                .orElseThrow(() -> new MRuntimeException("Notification  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -79,7 +80,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void readNotification(Integer idNotification) {
         Notification notification = notificationRepository.findById(idNotification)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Notification not found"));
+                .orElseThrow(() -> new MRuntimeException("Notification  not found", HttpStatus.NOT_FOUND));
         notification.setStatus(1);
         notificationRepository.save(notification);
     }

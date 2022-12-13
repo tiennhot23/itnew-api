@@ -2,7 +2,6 @@ package com.example.itnews.controller;
 
 import com.example.itnews.config.MailSenderService;
 import com.example.itnews.entity.Account;
-import com.example.itnews.entity.Image;
 import com.example.itnews.entity.Notification;
 import com.example.itnews.payloads.response.MException;
 import com.example.itnews.payloads.response.MResponse;
@@ -42,8 +41,6 @@ public class NotificationController {
     private CommentService commentService;
     @Autowired
     private FeedbackService feedbackService;
-    @Autowired
-    private ImageService imageService;
     @Autowired
     private PostService postService;
     @Autowired
@@ -95,6 +92,7 @@ public class NotificationController {
         }
     }
 
+    @Deprecated
     @GetMapping("/count")
     @PreAuthorize("permitAll()")
     public MResponse<?> countUnreadNotification(@RequestHeader(name = "Authorization", required = true) String header) throws MException {
@@ -135,6 +133,7 @@ public class NotificationController {
         }
     }
 
+    @Deprecated
     @GetMapping("/list")
     @PreAuthorize("permitAll()")
     public MResponse<?> getAllNotification(@RequestHeader(name = "Authorization", required = true) String header) throws MException {
@@ -155,6 +154,7 @@ public class NotificationController {
         }
     }
 
+    @Deprecated
     @GetMapping("/read_all")
     @PreAuthorize("permitAll()")
     public MResponse<?> markAllNotificationAsRead(@RequestHeader(name = "Authorization", required = true) String header) throws MException {
@@ -175,6 +175,7 @@ public class NotificationController {
         }
     }
 
+    @Deprecated
     @DeleteMapping("/delete_all")
     @PreAuthorize("permitAll()")
     public MResponse<?> deleteAllNotification(@RequestHeader(name = "Authorization", required = true) String header) throws MException {

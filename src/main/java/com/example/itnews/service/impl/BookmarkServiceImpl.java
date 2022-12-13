@@ -10,6 +10,7 @@ import com.example.itnews.repository.PostRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.BookmarkService;
 import com.example.itnews.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
@@ -37,7 +38,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public Bookmark get(Integer idAccount, Integer idPost) {
         return bookmarkRepository.findById(new BookmarkId(idAccount, idPost))
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Bookmark not found"));
+                .orElseThrow(() -> new MRuntimeException("Bookmark  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

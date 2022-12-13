@@ -29,7 +29,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     private void logResponse(HttpStatus httpStatus, HttpServletResponse response, RuntimeException exception) throws IOException {
-        MResponse<Object> mResponse = new MResponse<>("Thất bại: " + exception.getMessage());
+        String ms = "";
+        if (exception.getMessage().contains("Bad credentials")) ms = "Tài khoản đăng nhập không chính xác";
+        else ms = exception.getMessage();
+        MResponse<Object> mResponse = new MResponse<>("Thất bại: " + ms);
         response.setStatus(httpStatus.value());
         OutputStream outputStream = response.getOutputStream();
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, mResponse);

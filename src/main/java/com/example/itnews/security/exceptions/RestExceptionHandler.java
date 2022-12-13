@@ -29,14 +29,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
-        MResponse<Object> mResponse = new MResponse<>("Validation Error: " + ex.getBindingResult().toString(), null, null);
+        MResponse<Object> mResponse = new MResponse<>("Validation Error: " + ex.getBindingResult().getAllErrors().get(0).getDefaultMessage(), null, null);
 
         return new ResponseEntity<>(mResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(MException ex, WebRequest request) {
-        MResponse<Object> mResponse = new MResponse<>(ex.getMessage(), null, null );
+    public final ResponseEntity<?> handleAllExceptions(MException ex, WebRequest request) {
+        MResponse<?> mResponse = new MResponse<>(ex.getMessage(), null, null );
 
         return new ResponseEntity<>(mResponse, ex.getHttpStatus());
     }

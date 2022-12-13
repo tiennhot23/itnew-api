@@ -40,7 +40,7 @@ public class LockAccount {
     private Integer hoursLock;
 
     public LockAccount(LockAccountId lockAccountId, String reason, Integer hoursLock) {
-        this(lockAccountId, reason, new Date(), Utils.addHoursToJavaUtilDate(new Date(), hoursLock), hoursLock);
+        this(lockAccountId, reason, new Date(), hoursLock > 0 ? Utils.addHoursToJavaUtilDate(new Date(), hoursLock) : null, hoursLock);
     }
 
     @Override

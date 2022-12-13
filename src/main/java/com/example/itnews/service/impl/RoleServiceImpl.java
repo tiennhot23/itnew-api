@@ -7,6 +7,7 @@ import com.example.itnews.repository.VoteRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.RoleService;
 import com.example.itnews.service.VoteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,13 +26,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getRole(Integer idRole) {
         return roleRepository.findById(idRole)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": RoleNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Role  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Role getRole(String roleName) {
         return roleRepository.findRoleByName(roleName)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": RoleNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Role  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

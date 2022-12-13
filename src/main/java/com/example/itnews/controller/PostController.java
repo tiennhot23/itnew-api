@@ -230,6 +230,7 @@ public class PostController {
         }
     }
 
+    @Deprecated
     @GetMapping("/spam")
     @PreAuthorize("hasAnyRole('Moder', 'Admin')")
     public MResponse<?> getSpamPost(@RequestParam(value = "page", required = false) Integer page,
@@ -341,6 +342,7 @@ public class PostController {
         }
     }
 
+    @Deprecated
     @GetMapping("/newest/all")
     public MResponse<?> getNewestPost(@RequestParam(value = "page", required = false) Integer page,
                                       @RequestHeader(name = "Authorization", required = false) String header) throws MException {
@@ -511,6 +513,14 @@ public class PostController {
             if (body.getTitle() != null && !body.getTitle().isEmpty()
                     && body.getContent() != null && !body.getContent().isEmpty()
                     && body.getTags() != null && body.getTags().size() > 0) {
+                if (body.getAccess() != null) {
+                    int access = body.getAccess();
+                    if (access < 0 || access > 2) {
+                        throw new MException("Chế độ truy câp không đúng yêu cầu", HttpStatus.BAD_REQUEST);
+                    }
+                } else {
+                    body.setAccess(0);
+                }
                 if (body.getTags().size() < 1 || body.getTags().size() > 5) {
                     throw new MException("Số lượng thẻ chỉ từ 1 tói 5", HttpStatus.BAD_REQUEST);
                 }
@@ -525,6 +535,7 @@ public class PostController {
                 post.setTitle(body.getTitle());
                 post.setContent(body.getContent());
                 post.setAccount(account);
+                post.setAccess(body.getAccess());
                 List<Tag> tags = new ArrayList<>();
                 for (Integer idTag : body.getTags()) {
                     Tag tag = tagService.get(idTag);
@@ -568,6 +579,12 @@ public class PostController {
                 if (body.getTitle() != null && !body.getTitle().isEmpty()
                         && body.getContent() != null && !body.getContent().isEmpty()
                         && body.getTags() != null && body.getTags().size() > 0) {
+                    if (body.getAccess() != null) {
+                        int access = body.getAccess();
+                        if (access < 0 || access > 2) {
+                            throw new MException("Chế độ truy câp không đúng yêu cầu", HttpStatus.BAD_REQUEST);
+                        }
+                    }
                     if (body.getTags().size() < 1 || body.getTags().size() > 5) {
                         throw new MException("Số lượng thẻ chỉ từ 1 tói 5", HttpStatus.BAD_REQUEST);
                     }
@@ -580,7 +597,7 @@ public class PostController {
 
                     post.setTitle(body.getTitle());
                     post.setContent(body.getContent());
-                    post.setAccess(body.getAccess());
+                    post.setAccess(body.getAccess() == null ? post.getAccess() : body.getAccess());
                     List<Tag> tags = new ArrayList<>();
                     for (Integer idTag : body.getTags()) {
                         Tag tag = tagService.get(idTag);
@@ -707,6 +724,7 @@ public class PostController {
         }
     }
 
+    @Deprecated
     @GetMapping("/{id}/voteup")
     public MResponse<?> getVoteUp(@PathVariable("id") Integer idPost,
                                          @RequestHeader(name = "Authorization", required = false) String header) throws MException {
@@ -729,6 +747,7 @@ public class PostController {
         }
     }
 
+    @Deprecated
     @GetMapping("/{id}/votedown")
     public MResponse<?> getVoteDown(@PathVariable("id") Integer idPost,
                                   @RequestHeader(name = "Authorization", required = false) String header) throws MException {
@@ -751,6 +770,7 @@ public class PostController {
         }
     }
 
+    @Deprecated
     @GetMapping("/{id}/vote")
     public MResponse<?> getVote(@PathVariable("id") Integer idPost,
                                     @RequestHeader(name = "Authorization", required = false) String header) throws MException {

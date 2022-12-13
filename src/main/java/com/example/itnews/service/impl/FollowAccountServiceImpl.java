@@ -10,6 +10,7 @@ import com.example.itnews.repository.FollowTagRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.FollowAccountService;
 import com.example.itnews.service.FollowTagService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class FollowAccountServiceImpl implements FollowAccountService {
     @Override
     public FollowAccount get(Integer idAccountFollower, Integer idAccountFollowing) {
         return followAccountRepository.findById(new FollowAccountId(idAccountFollower, idAccountFollowing))
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Follow account not found"));
+                .orElseThrow(() -> new MRuntimeException("Follow account  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

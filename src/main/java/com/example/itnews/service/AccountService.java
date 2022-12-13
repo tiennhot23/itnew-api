@@ -17,6 +17,6 @@ public interface AccountService {
     IAccountDTO getAllInformation(Integer id);
     IAccountDTO getAllInformationWithStatus(Integer idAccount, Integer idUser);
 
-    List<Integer> getListIdAccount(Integer page);
+    List<Integer> getListIdAccount();
     List<Integer> getSearch(String search, Integer page);
 }

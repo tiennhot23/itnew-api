@@ -1,18 +1,15 @@
 package com.example.itnews.service.impl;
 
 import com.example.itnews.dto.sqlmapping.IFeedbackDTO;
-import com.example.itnews.entity.Category;
 import com.example.itnews.entity.Feedback;
-import com.example.itnews.repository.CategoryRepository;
 import com.example.itnews.repository.FeedbackRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
-import com.example.itnews.service.CategoryService;
 import com.example.itnews.service.FeedbackService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
@@ -37,7 +34,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public IFeedbackDTO selectID(Integer idFeedback) {
         return feedbackRepository.selectID(idFeedback)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": feedback not found"));
+                .orElseThrow(() -> new MRuntimeException("feedback  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -53,7 +50,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public void readFeedback(Integer idFeedback) {
         Feedback feedback = feedbackRepository.findById(idFeedback)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": feedback not found"));
+                .orElseThrow(() -> new MRuntimeException("feedback  not found", HttpStatus.NOT_FOUND));
         feedback.setStatus(1);
         feedbackRepository.save(feedback);
     }
@@ -61,7 +58,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public void unreadFeedback(Integer idFeedback) {
         Feedback feedback = feedbackRepository.findById(idFeedback)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": feedback not found"));
+                .orElseThrow(() -> new MRuntimeException("feedback  not found", HttpStatus.NOT_FOUND));
         feedback.setStatus(0);
         feedbackRepository.save(feedback);
     }

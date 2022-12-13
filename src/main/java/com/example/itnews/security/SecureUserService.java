@@ -25,7 +25,7 @@ public class SecureUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
         Account account = accountRepository.findByAccountName(username)
-                .orElseThrow(() -> new RuntimeException(TAG + ": Tài khoản không tồn tại"));
+                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
         if (lockAccountService.isValidLockAccount(account.getIdAccount())) {
             throw new MRuntimeException("Tài khoản đang bị khoá", HttpStatus.BAD_REQUEST);
         }

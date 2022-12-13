@@ -4,7 +4,6 @@ import com.example.itnews.config.MailSenderService;
 import com.example.itnews.dto.sqlmapping.IFeedbackDTO;
 import com.example.itnews.entity.Account;
 import com.example.itnews.entity.Feedback;
-import com.example.itnews.entity.Image;
 import com.example.itnews.payloads.response.MException;
 import com.example.itnews.payloads.response.MResponse;
 import com.example.itnews.security.exceptions.MRuntimeException;
@@ -43,8 +42,6 @@ public class FeedbackController {
     private CommentService commentService;
     @Autowired
     private FeedbackService feedbackService;
-    @Autowired
-    private ImageService imageService;
     @Autowired
     private PostService postService;
     @Autowired
@@ -87,6 +84,7 @@ public class FeedbackController {
         }
     }
 
+    @Deprecated
     @GetMapping("/information/{id_feedback}")
     @PreAuthorize("hasRole('Admin')")
     public MResponse<?> getFeedbackMarkAsRead(@PathVariable("id_feedback") Integer idFeedback,
@@ -129,6 +127,7 @@ public class FeedbackController {
         }
     }
 
+    @Deprecated
     @GetMapping("/all")
     @PreAuthorize("hasRole('Admin')")
     public MResponse<?> getAllFeedback(@RequestHeader(name = "Authorization", required = true) String header) throws MException {
@@ -149,6 +148,7 @@ public class FeedbackController {
         }
     }
 
+    @Deprecated
     @GetMapping("/all/amount")
     @PreAuthorize("hasRole('Admin')")
     public MResponse<?> countFeedback(@RequestParam(value = "is_unread", required = false) Integer isUnread,

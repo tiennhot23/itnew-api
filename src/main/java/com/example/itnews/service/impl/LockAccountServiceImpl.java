@@ -2,11 +2,15 @@ package com.example.itnews.service.impl;
 
 import com.example.itnews.dto.LockAccountDTO;
 import com.example.itnews.dto.sqlmapping.ILockAccountDTO;
+import com.example.itnews.entity.Account;
 import com.example.itnews.entity.LockAccount;
 import com.example.itnews.entity.LockAccountId;
 import com.example.itnews.payloads.response.MException;
+import com.example.itnews.repository.AccountRepository;
 import com.example.itnews.repository.LockAccountRepository;
+import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.LockAccountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,9 +25,11 @@ public class LockAccountServiceImpl implements LockAccountService {
 
     private final String TAG = "LockAccountServiceImpl";
     private final LockAccountRepository lockAccountRepository;
+    private final AccountRepository accountRepository;
 
-    public LockAccountServiceImpl(LockAccountRepository lockAccountRepository) {
+    public LockAccountServiceImpl(LockAccountRepository lockAccountRepository, AccountRepository accountRepository) {
         this.lockAccountRepository = lockAccountRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Override
@@ -31,7 +37,15 @@ public class LockAccountServiceImpl implements LockAccountService {
         LockAccount lockAccount = lockAccountRepository
                 .findLockAccountByLockAccountIdIdAccountLock(idAccount)
                 .orElse(null);
-        return lockAccount != null && lockAccount.getTimeEndLock().after(new Date());
+        Account account = accountRepository.findById(idAccount)
+                .orElseThrow(() -> new MRuntimeException("Account not found", HttpStatus.NOT_FOUND));
+        if (lockAccount == null || (lockAccount.getTimeEndLock() != null && lockAccount.getTimeEndLock().before(new Date()))) {
+            if (lockAccount != null) lockAccountRepository.deleteByLockAccountIdIdAccountLock(idAccount);
+            account.setStatus(0);
+            accountRepository.save(account);
+            return false;
+        }
+        return true;
     }
 
     @Override

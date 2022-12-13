@@ -11,11 +11,13 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "Username không được trống")
+    @NotEmpty(message = "Username mới không được trống")
     @JsonProperty("account_name")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Password không được trống")
+    @NotEmpty(message = "Password không được trống")
     private String password;
 
     public String getUsername() {

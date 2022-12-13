@@ -97,6 +97,7 @@ public class TagController {
         }
     }
 
+    @Deprecated
     @GetMapping("/{id_account}/all")
     public MResponse<?> getAllTags(@PathVariable("id_account") Integer idAccount,
             @RequestHeader(name = "Authorization", required = false) String header) throws MException {
@@ -233,6 +234,9 @@ public class TagController {
         try {
             if (!tagService.hasId(idTag)) {
                 throw new MException("Không tìm thấy thẻ", HttpStatus.NOT_FOUND);
+            }
+            if (name == null || name.equals("")) {
+                throw  new MException("Thiếu tên thẻ", HttpStatus.BAD_REQUEST);
             }
             Tag tag = tagService.get(idTag);
             if (logo != null) {

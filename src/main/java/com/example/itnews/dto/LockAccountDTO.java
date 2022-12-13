@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -15,7 +16,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class LockAccountDTO {
-    @NotNull
+    @NotNull(message = "Lí do không được trống")
+    @NotEmpty(message = "Lí do không được trống")
     @JsonProperty("reason")
     private String reason;
 
@@ -25,7 +27,7 @@ public class LockAccountDTO {
 //    @JsonProperty("time_end_lock")
 //    private Date timeEndLock;
 
-    @NotNull
+    @NotNull(message = "Thời gian khoá không được trống")
     @JsonProperty("hours_lock")
     private Integer hoursLock;
 

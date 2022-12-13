@@ -9,6 +9,7 @@ import com.example.itnews.repository.FollowTagRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.BookmarkService;
 import com.example.itnews.service.FollowTagService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class FollowTagServiceImpl implements FollowTagService {
     @Override
     public FollowTag get(Integer idAccount, Integer idTag) {
         return followTagRepository.findById(new FollowTagId(idAccount, idTag))
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Follow tag not found"));
+                .orElseThrow(() -> new MRuntimeException("Follow tag  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

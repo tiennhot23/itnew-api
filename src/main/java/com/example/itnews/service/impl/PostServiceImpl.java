@@ -9,6 +9,7 @@ import com.example.itnews.repository.AccountRepository;
 import com.example.itnews.repository.PostRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post getPostById(Integer idPost) {
         return postRepository.findById(idPost)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": PostNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Post  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -49,13 +50,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public IPostDTO selectId(Integer idPost) {
         return postRepository.selectId(idPost)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": PostNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Post  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public IPostDTO selectIdForUser(Integer idPost, Integer idUser) {
         return postRepository.selectIdForUser(idPost, idUser)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": PostNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Post  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override

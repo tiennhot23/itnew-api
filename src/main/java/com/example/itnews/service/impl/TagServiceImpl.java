@@ -8,6 +8,7 @@ import com.example.itnews.repository.TagRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.BookmarkService;
 import com.example.itnews.service.TagService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -54,25 +55,25 @@ public class TagServiceImpl implements TagService {
     @Override
     public ITagDTO selectId(Integer idTag) {
         return tagRepository.selectId(idTag)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Tag not found"));
+                .orElseThrow(() -> new MRuntimeException("Tag  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public ITagDTO selectIdByAccount(Integer idTag, Integer idAccount) {
         return tagRepository.selectIdByAccount(idTag, idAccount)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Tag not found"));
+                .orElseThrow(() -> new MRuntimeException("Tag  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Tag get(Integer idTag) {
         return tagRepository.findById(idTag)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Tag not found"));
+                .orElseThrow(() -> new MRuntimeException("Tag  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Tag get(String nameTag) {
         return tagRepository.findTagByName(nameTag)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Tag not found"));
+                .orElseThrow(() -> new MRuntimeException("Tag  not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -93,7 +94,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public Integer countPostsOfTag(Integer idTag) {
         return tagRepository.countPostsOfTag(idTag)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": Tag not found"))
+                .orElseThrow(() -> new MRuntimeException("Tag  not found", HttpStatus.NOT_FOUND))
                 .getTotalPost();
     }
 }

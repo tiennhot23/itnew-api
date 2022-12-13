@@ -5,6 +5,7 @@ import com.example.itnews.entity.Account;
 import com.example.itnews.repository.AccountRepository;
 import com.example.itnews.security.exceptions.MRuntimeException;
 import com.example.itnews.service.AccountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,13 +26,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getAccountByUsername(String accountName) {
         return accountRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": AccountNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Account not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Account getAccountById(Integer id) {
         return accountRepository.findById(id)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": AccountNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Account not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -58,18 +59,18 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public IAccountDTO getAllInformation(Integer id) {
         return accountRepository.selectId(id)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": AccountNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Account not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public IAccountDTO getAllInformationWithStatus(Integer idAccount, Integer idUser) {
         return accountRepository.selectIdStatus(idAccount, idUser)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": AccountNotFound"));
+                .orElseThrow(() -> new MRuntimeException("Account not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public List<Integer> getListIdAccount(Integer page) {
-        return accountRepository.selectAllId((page - 1) * 10)
+    public List<Integer> getListIdAccount() {
+        return accountRepository.selectAllId()
                 .orElseGet(ArrayList::new)
                 .stream().map(IAccountDTO::getIdAccount).collect(Collectors.toList());
     }

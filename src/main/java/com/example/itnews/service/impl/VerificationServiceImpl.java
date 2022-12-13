@@ -28,7 +28,7 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public Verification addVerification(Integer idAccount, String code) {
         Account account = accountRepository.findById(idAccount)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": AccountNotFound", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new MRuntimeException("Account  not found", HttpStatus.NOT_FOUND));
         return verificationRepository.save(
                 Verification.builder().account(account)
                     .code(code)
@@ -41,10 +41,10 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public Verification checkValidVerification(Integer idAccount) {
         Verification verification = verificationRepository.findByIdAccount(idAccount)
-                .orElseThrow(() -> new MRuntimeException(TAG + ": VerificationNotFound", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MRuntimeException("Verification  not found", HttpStatus.NOT_FOUND));
         if (verification.getEndTime().before(new Date())) {
             verificationRepository.delete(verification);
-            throw new MRuntimeException(TAG + ": VerificationInvalid", HttpStatus.BAD_REQUEST);
+            throw new MRuntimeException("VerificationInvalid: Mã xác nhận không hợp lệ hoặc đã hết hạn", HttpStatus.BAD_REQUEST);
         }
         return verification;
     }

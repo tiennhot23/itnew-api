@@ -72,8 +72,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             "WHERE A.id_account= :idAccount) as a")
     Optional<IAccountDTO> selectIdStatus(@Param("idAccount") Integer idAccount, @Param("idUser") Integer idUser);
 
-    @Query(nativeQuery = true, value = "select id_account as idAccount from account order by idAccount desc LIMIT 10 OFFSET :offset")
-    Optional<List<IAccountDTO>> selectAllId(@Param("offset") Integer offset);
+    @Query(nativeQuery = true, value = "select id_account as idAccount from account order by idAccount desc")
+    Optional<List<IAccountDTO>> selectAllId();
 
     @Query(nativeQuery = true, value = "select id_account as idAccount from account where (lower(account_name) like :search or lower(real_name) like :search) LIMIT 10 OFFSET :offset")
     Optional<List<IAccountDTO>> getSearch(@Param("search") String search, @Param("offset") Integer offset);
